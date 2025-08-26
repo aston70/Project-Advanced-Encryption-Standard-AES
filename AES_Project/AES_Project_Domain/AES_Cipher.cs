@@ -34,6 +34,8 @@ namespace AES_Project_Domain
             // Calls the other constructor
         }
 
+        #region "public cipher calls"
+
         /// <summary>
         /// Encrypt a single 16-byte block.
         /// FIPS-197 Section 5.1
@@ -77,6 +79,51 @@ namespace AES_Project_Domain
             return Cipher(plaintextBytes);
         }
 
+        #endregion
+
+        #region "public inverse cipher calls"
+
+        public byte[] InvCipher(byte[] input)
+        {
+            if (input.Length != 16) throw new ArgumentException("Block must be 16 bytes");
+
+            byte[,] state = new byte[4, 4];
+            for (int i = 0; i < 16; i++)
+                state[i % 4, i / 4] = input[i];
+
+            AddRoundKey(state, _Nr);
+
+            for (int round = _Nr - 1; round >= 1; round--)
+            {
+                InvShiftRows(state);
+                InvSubBytes(state);
+                AddRoundKey(state, round);
+                InvMixColumns(state);
+            }
+
+            // Final round
+            InvShiftRows(state);
+            InvSubBytes(state);
+            AddRoundKey(state, 0);
+
+            byte[] output = new byte[16];
+            for (int i = 0; i < 16; i++)
+                output[i] = state[i % 4, i / 4];
+
+            return output;
+        }
+
+        // Inverse Cipher method for string input
+        public byte[] InvCipher(string hexPlaintext)
+        {
+            byte[] plaintextBytes = Utility.ToByteArray(hexPlaintext);
+            return InvCipher(plaintextBytes);
+        }
+
+        #endregion
+
+        #region "Cipher Steps"
+
         /// <summary>
         /// Substitute byte using SBoxes.SBox
         /// FIPS-197 Section 5.1.1
@@ -84,6 +131,7 @@ namespace AES_Project_Domain
         /// <param name="state"></param>
         private void SubBytes(byte[,] state)
         {
+
             for (int row = 0; row < 4; row++)
             {
                 for (int col = 0; col < 4; col++)
@@ -91,6 +139,7 @@ namespace AES_Project_Domain
                     state[row, col] = SBoxes.SBox[state[row, col]];
                 }
             }
+
         }
 
         /// <summary>
@@ -100,6 +149,7 @@ namespace AES_Project_Domain
         /// <param name="state"></param>
         private void ShiftRows(byte[,] state)
         {
+
             // Don't shift first row...
             for (int row = 1; row < 4; row++)
             {
@@ -113,6 +163,7 @@ namespace AES_Project_Domain
                     state[row, col] = temp[col];
                 }
             }
+
         }
 
 
@@ -146,9 +197,85 @@ namespace AES_Project_Domain
             }
         }
 
+        #endregion
+
+        #region "Inverse Cipher Steps"
+
+        /// <summary>
+        /// Inverse Substitute byte using SBoxes.InverseSBox
+        /// Section 5.3.2 of FIPS-197
+        /// </summary>
+        /// <param name="state"></param>
+        private void InvSubBytes(byte[,] state)
+        {
+            for (int row = 0; row < 4; row++)
+                for (int col = 0; col < 4; col++)
+                    state[row, col] = SBoxes.InverseSBox[state[row, col]];
+        }
+
+        /// <summary>
+        /// Inverse Shift rows circularly to the right.
+        /// Section 5.3.1 of FIPS-197
+        /// </summary>
+        /// <param name="state"></param>
+        private void InvShiftRows(byte[,] state)
+        {
+
+            for (int row = 1; row < 4; row++)
+            {
+                byte[] temp = new byte[4];
+                for (int col = 0; col < 4; col++)
+                    temp[col] = state[row, (col - row + 4) % 4];
+                for (int col = 0; col < 4; col++)
+                    state[row, col] = temp[col];
+            }
+
+        }
+
+        /// <summary>
+        /// Inverse Mix Columns
+        /// Section 5.3.3 of FIPS-197
+        /// </summary>
+        /// <param name="state"></param>
+        private void InvMixColumns(byte[,] state)
+        {
+
+            for (int col = 0; col < 4; col++)
+            {
+                byte s0 = state[0, col];
+                byte s1 = state[1, col];
+                byte s2 = state[2, col];
+                byte s3 = state[3, col];
+
+                state[0, col] = (byte)(FiniteField.GF_Multiply(s0, 0x0e) ^
+                                       FiniteField.GF_Multiply(s1, 0x0b) ^
+                                       FiniteField.GF_Multiply(s2, 0x0d) ^
+                                       FiniteField.GF_Multiply(s3, 0x09));
+
+                state[1, col] = (byte)(FiniteField.GF_Multiply(s0, 0x09) ^
+                                       FiniteField.GF_Multiply(s1, 0x0e) ^
+                                       FiniteField.GF_Multiply(s2, 0x0b) ^
+                                       FiniteField.GF_Multiply(s3, 0x0d));
+
+                state[2, col] = (byte)(FiniteField.GF_Multiply(s0, 0x0d) ^
+                                       FiniteField.GF_Multiply(s1, 0x09) ^
+                                       FiniteField.GF_Multiply(s2, 0x0e) ^
+                                       FiniteField.GF_Multiply(s3, 0x0b));
+
+                state[3, col] = (byte)(FiniteField.GF_Multiply(s0, 0x0b) ^
+                                       FiniteField.GF_Multiply(s1, 0x0d) ^
+                                       FiniteField.GF_Multiply(s2, 0x09) ^
+                                       FiniteField.GF_Multiply(s3, 0x0e));
+            }
+
+        }
+
+        #endregion
+
         /// <summary>
         /// XOR state with round key.
         /// FIPS-197 Section 5.1.4
+        /// FIPS-197 Section 5.3.4 (Inverse is the same, bc it uses XOR)
         /// </summary>
         /// <param name="state"></param>
         /// <param name="round"></param>
