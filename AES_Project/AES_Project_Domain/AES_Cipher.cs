@@ -42,6 +42,8 @@ namespace AES_Project_Domain
         {
             if (input.Length != 16) throw new ArgumentException("Block must be 16 bytes");
 
+            Console.WriteLine("CIPHER (ENCRYPT):");
+
             // Convert to 4x4 array
             byte[,] state = new byte[4, 4];
             for (int i = 0; i < 16; i++)
@@ -102,6 +104,8 @@ namespace AES_Project_Domain
         public byte[] InvCipher(byte[] input, bool trace = false)
         {
             if (input.Length != 16) throw new ArgumentException("Block must be 16 bytes");
+
+            Console.WriteLine("INVERSE CIPHER (DECRYPT):");
 
             byte[,] state = new byte[4, 4];
             for (int i = 0; i < 16; i++)

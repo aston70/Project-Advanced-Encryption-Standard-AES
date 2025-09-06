@@ -46,12 +46,12 @@ namespace AES_Project
 
                 byte[] output;
 
-                if (mode == "encrypt") {
-                    Console.WriteLine("CIPHER (ENCRYPT):");
+                if (mode == "encrypt") {                    
                     output = aes.Cipher(inputHex, trace: true);
+                    Console.WriteLine();
+                    output = aes.InvCipher(output, trace: true);
                 }
-                else if (mode == "decrypt") {
-                    Console.WriteLine("CIPHER (DECRYPT):");
+                else if (mode == "decrypt") {                    
                     output = aes.InvCipher(inputHex, trace: true);
                 }
                 else
@@ -59,12 +59,6 @@ namespace AES_Project
                     Console.WriteLine("Invalid mode. Use 'encrypt' or 'decrypt'.");
                     return;
                 }
-
-                //TODO: console the output in the Cipher function
-                //Console.WriteLine("Key:       " + keyHex);
-                //Console.WriteLine("Input:     " + inputHex);
-                //Console.WriteLine($"{mode.First().ToString().ToUpper() + mode.Substring(1)}: " +
-                //                  BitConverter.ToString(output).Replace("-", "").ToLower());
 
             }
             catch (Exception ex)
