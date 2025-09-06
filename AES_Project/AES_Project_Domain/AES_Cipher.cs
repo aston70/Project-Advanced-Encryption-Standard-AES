@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using System.Text;
 
 namespace AES_Project_Domain
 {
@@ -8,23 +9,20 @@ namespace AES_Project_Domain
 
         private readonly byte[][] _expandedKey;
         private readonly int _Nr; // number of rounds
+        private readonly byte[][] _roundKeys;
+
 
         public AES_Cipher(byte[] key, AesKeySize keySize)
         {
             // Expand the key
             _expandedKey = KeyExpansion.ExpandKey(key, keySize);
 
-            // Get the number of transformation rounds that convert the inputbased on key size:
-            // 10 rounds for 128 - bit keys.
-            // 12 rounds for 192 - bit keys.
-            // 14 rounds for 256 - bit keys.
-            _Nr = keySize switch
-            {
-                AesKeySize.AES128 => 10,
-                AesKeySize.AES192 => 12,
-                AesKeySize.AES256 => 14,
-                _ => throw new ArgumentException("Invalid AES version")
-            };
+            // Convert the expanded key words into 16-byte round keys.
+            // Each round key corresponds to one round of AES transformations.
+            _roundKeys = Utility.GetRoundKeys(key, keySize);
+
+            var (_, Nr) = AES_Parameters.GetNkAndNrFromKeySize(keySize);
+            _Nr = Nr;
         }
 
         // Accept key as hex string
@@ -40,7 +38,7 @@ namespace AES_Project_Domain
         /// Encrypt a single 16-byte block.
         /// FIPS-197 Section 5.1
         /// </summary>
-        public byte[] Cipher(byte[] input)
+        public byte[] Cipher(byte[] input, bool trace = false)
         {
             if (input.Length != 16) throw new ArgumentException("Block must be 16 bytes");
 
@@ -49,41 +47,59 @@ namespace AES_Project_Domain
             for (int i = 0; i < 16; i++)
                 state[i % 4, i / 4] = input[i];
 
+            TraceRound(trace, 0, "input", state); // initial input
             AddRoundKey(state, 0);
+            TraceRound(trace, 0, "k_sch", _roundKeys[0]);  // first round key
 
             for (int round = 1; round < _Nr; round++)
             {
+                TraceRound(trace, round,"start", state);
                 SubBytes(state);
+
+                TraceRound(trace, round, "s_box", state);
                 ShiftRows(state);
+
+                TraceRound(trace, round, "s_row", state);
                 MixColumns(state);
+
+                TraceRound(trace, round, "m_col", state);
                 AddRoundKey(state, round);
+
+                TraceRound(trace, round, "k_sch", _roundKeys[round]);
             }
 
             // Final round
+            TraceRound(trace, _Nr, "start", state);
             SubBytes(state);
+            TraceRound(trace, _Nr, "s_box", state);
             ShiftRows(state);
+            TraceRound(trace, _Nr, "s_row", state);
             AddRoundKey(state, _Nr);
+            TraceRound(trace, _Nr, "k_sch", _roundKeys[_Nr]);
 
             // Convert state back to array
             byte[] output = new byte[16];
             for (int i = 0; i < 16; i++)
                 output[i] = state[i % 4, i / 4];
 
+            // Trace the final output
+            TraceRound(trace, _Nr, "output", output);
+
             return output;
         }
 
         // Cipher method for string input
-        public byte[] Cipher(string hexPlaintext)
+        public byte[] Cipher(string hexPlaintext, bool trace = false)
         {
             byte[] plaintextBytes = Utility.ToByteArray(hexPlaintext);
-            return Cipher(plaintextBytes);
+            return Cipher(plaintextBytes, trace);
         }
 
         #endregion
 
         #region "public inverse cipher calls"
 
-        public byte[] InvCipher(byte[] input)
+        public byte[] InvCipher(byte[] input, bool trace = false)
         {
             if (input.Length != 16) throw new ArgumentException("Block must be 16 bytes");
 
@@ -91,33 +107,62 @@ namespace AES_Project_Domain
             for (int i = 0; i < 16; i++)
                 state[i % 4, i / 4] = input[i];
 
+            // Initial trace
+            TraceRound(trace, 0, "iinput", input);
             AddRoundKey(state, _Nr);
+            TraceRound(trace, 0, "ik_sch", _roundKeys[_Nr]);
 
             for (int round = _Nr - 1; round >= 1; round--)
             {
+                TraceRound(trace, _Nr - round, "istart", state);
+
                 InvShiftRows(state);
+                TraceRound(trace, _Nr - round, "is_row", state);
+
                 InvSubBytes(state);
+                TraceRound(trace, _Nr - round, "is_box", state);
+                TraceRound(trace, _Nr - round, "ik_sch", _roundKeys[round]);
+
                 AddRoundKey(state, round);
+                TraceRound(trace, _Nr - round, "ik_add", state);
+
                 InvMixColumns(state);
             }
 
             // Final round
+            TraceRound(trace, _Nr, "istart", state);
             InvShiftRows(state);
+            TraceRound(trace, _Nr, "is_row", state);
+
             InvSubBytes(state);
+            TraceRound(trace, _Nr, "is_box", state);
+
+            TraceRound(trace, _Nr, "ik_sch", _roundKeys[0]);
             AddRoundKey(state, 0);
 
             byte[] output = new byte[16];
             for (int i = 0; i < 16; i++)
                 output[i] = state[i % 4, i / 4];
 
+            TraceRound(trace, _Nr, "ioutput", output);
+
             return output;
         }
 
         // Inverse Cipher method for string input
-        public byte[] InvCipher(string hexPlaintext)
+        public byte[] InvCipher(string hexPlaintext, bool trace = false)
         {
             byte[] plaintextBytes = Utility.ToByteArray(hexPlaintext);
-            return InvCipher(plaintextBytes);
+            return InvCipher(plaintextBytes, trace);
+        }
+
+        private static string StateToHex(byte[,] state)
+        {
+            var sb = new StringBuilder(32);
+            for (int col = 0; col < 4; col++)
+                for (int row = 0; row < 4; row++)
+                    sb.Append(state[row, col].ToString("x2"));
+            return sb.ToString();
         }
 
         #endregion
@@ -279,6 +324,7 @@ namespace AES_Project_Domain
         /// </summary>
         /// <param name="state"></param>
         /// <param name="round"></param>
+      
         private void AddRoundKey(byte[,] state, int round)
         {
             
@@ -290,6 +336,32 @@ namespace AES_Project_Domain
                 }
             }
         }
+
+        private void TraceRound(bool trace, int round, string label, byte[] data)
+        {
+            if (!trace || data == null) return;
+
+            string roundStr = round < 10 ? $" {round}" : round.ToString();
+            string hex = BitConverter.ToString(data).Replace("-", "").ToLower();
+            Console.WriteLine($"round[{roundStr}].{label,-8}     {hex}");
+        }
+
+        private void TraceRound(bool trace, int round, string label, byte[,] state)
+        {
+            if (!trace || state == null) return;
+
+            string roundStr = round < 10 ? $" {round}" : round.ToString(); // pad single digits
+            string hex = StateToHex(state);
+            Console.WriteLine($"round[{roundStr}].{label,-8}     {hex}");
+        }
+
+        //private void TraceState(bool trace, string label, byte[,] state)
+        //{
+        //    if (!trace || state == null) return;
+
+        //    Console.WriteLine($"{label}     {StateToHex(state)}");
+        //}
+
 
     }
 

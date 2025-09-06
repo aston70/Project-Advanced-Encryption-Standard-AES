@@ -1,4 +1,5 @@
 ﻿using AES_Project_Domain;
+using System.Security.Cryptography;
 
 namespace AES_Project
 {
@@ -7,8 +8,8 @@ namespace AES_Project
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("AES Implementation (FIPS-197)");
-            Console.WriteLine();
+            //Console.WriteLine("AES Implementation (FIPS-197)");
+            //Console.WriteLine();
 
             if (args.Length == 0)
             {
@@ -26,9 +27,9 @@ namespace AES_Project
                 return;
             }
 
-            string keySizeStr = args[0];
-            string keyHex = args[1];
-            string inputHex = args[2];
+            string keySizeStr = args[0];            
+            string inputHex = args[1];
+            string keyHex = args[2];
             string mode = args.Length == 4 ? args[3].ToLower() : "encrypt"; // default encrypt
 
             if (!Enum.TryParse<AesKeySize>(keySizeStr, true, out var keySize))
@@ -39,14 +40,19 @@ namespace AES_Project
 
             try
             {
+                OutputHeader(keySize, inputHex, keyHex);
+
                 var aes = new AES_Cipher(keyHex, keySize);
+
                 byte[] output;
 
                 if (mode == "encrypt") {
-                    output = aes.Cipher(inputHex);
+                    Console.WriteLine("CIPHER (ENCRYPT):");
+                    output = aes.Cipher(inputHex, trace: true);
                 }
                 else if (mode == "decrypt") {
-                    output = aes.InvCipher(inputHex);
+                    Console.WriteLine("CIPHER (DECRYPT):");
+                    output = aes.InvCipher(inputHex, trace: true);
                 }
                 else
                 {
@@ -54,10 +60,11 @@ namespace AES_Project
                     return;
                 }
 
-                Console.WriteLine("Key:       " + keyHex);
-                Console.WriteLine("Input:     " + inputHex);
-                Console.WriteLine($"{mode.First().ToString().ToUpper() + mode.Substring(1)}: " +
-                                  BitConverter.ToString(output).Replace("-", "").ToLower());
+                //TODO: console the output in the Cipher function
+                //Console.WriteLine("Key:       " + keyHex);
+                //Console.WriteLine("Input:     " + inputHex);
+                //Console.WriteLine($"{mode.First().ToString().ToUpper() + mode.Substring(1)}: " +
+                //                  BitConverter.ToString(output).Replace("-", "").ToLower());
 
             }
             catch (Exception ex)
@@ -65,7 +72,26 @@ namespace AES_Project
                 Console.WriteLine("Error: " + ex.Message);
             }
 
+#if DEBUG
+            Console.WriteLine("Paused in debug mode. Press Enter to continue...");
+            Console.ReadLine();
+#endif
+
         }
+
+        static void OutputHeader(AesKeySize keySize, string plainText, string key)
+        {
+            var (Nk, Nr) = AES_Parameters.GetNkAndNrFromKeySize(keySize);
+            string cipherType = AES_Parameters.GetCipherType(keySize);
+            string displayKeySize = AES_Parameters.GetDisplayString(keySize);
+
+            Console.WriteLine($"{cipherType}   {displayKeySize} (Nk={Nk}, Nr={Nr}))");
+            Console.WriteLine();
+            Console.WriteLine($"PLAINTEXT:          {plainText}");
+            Console.WriteLine($"KEY:                {key}");
+            Console.WriteLine();
+        }
+
 
         static void RunCipherAppendixCTests()
         {

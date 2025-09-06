@@ -24,6 +24,28 @@
             return BitConverter.ToString(data).Replace("-", "").ToLowerInvariant();
         }
 
+        public static byte[][] GetRoundKeys(byte[] key, AesKeySize keySize)
+        {
+            byte[][] w = KeyExpansion.ExpandKey(key, keySize);
+
+            (int Nk, int Nr) = AES_Parameters.GetNkAndNrFromKeySize(keySize);
+            int Nb = 4; // AES block size in words
+
+            byte[][] roundKeys = new byte[Nr + 1][];
+            for (int round = 0; round <= Nr; round++)
+            {
+                roundKeys[round] = new byte[16];
+                for (int col = 0; col < Nb; col++)
+                {
+                    byte[] word = w[round * Nb + col];
+                    for (int row = 0; row < Nb; row++)
+                        roundKeys[round][col * Nb + row] = word[row];
+                }
+            }
+
+            return roundKeys;
+        }
+
     }
 
 }

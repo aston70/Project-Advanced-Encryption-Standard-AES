@@ -63,16 +63,7 @@
         public static byte[][] ExpandKey(byte[] key, AesKeySize keySize)
         {
 
-            int Nk;
-            int Nr;
-
-            switch (keySize)
-            {
-                case AesKeySize.AES128: Nk = 4; Nr = 10; break;
-                case AesKeySize.AES192: Nk = 6; Nr = 12; break;
-                case AesKeySize.AES256: Nk = 8; Nr = 14; break;
-                default: throw new ArgumentException("Invalid AES version");
-            }
+            (int Nk, int Nr) = AES_Parameters.GetNkAndNrFromKeySize(keySize);
 
             if (key.Length != Nk * 4) throw new ArgumentException("Key length mismatch");
 
