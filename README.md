@@ -142,7 +142,7 @@ PS C:\VS Projects\Project-Advanced-Encryption-Standard-AES>
 ### 4. Execute
 Executable accepts either NO arguments or 3 to 4 arguments  <required> [optional]
 Argument Usage:
-AES_Project_Console <AES128 | AES192 | AES256> <key> <plaintext> [encrypt | decrypt]
+AES_Project_Console <AES128 | AES192 | AES256> <plaintext> <key> [encrypt | decrypt]
 
 # Windows:
 ```bat
