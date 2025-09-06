@@ -140,35 +140,38 @@ PS C:\VS Projects\Project-Advanced-Encryption-Standard-AES>
 ```
 
 ### 4. Execute
+Executable accepts either NO arguments or 3 to 4 arguments  <required> [optional]
+Argument Usage:
+AES_Project_Console <AES128 | AES192 | AES256> <key> <plaintext> [encrypt | decrypt]
 
 # Windows:
 ```bat
-# Full Appendix C of the FIPS specification
+# Full Appendix C of the FIPS specification (Pass no arguments to executable)
 AES_Project_Console.exe > AES_output.txt
 
-# AES-128 Test
+# AES-128
 AES_Project_Console.exe AES128 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f > AES_output.txt
 
-# AES-192 Test
+# AES-192
 AES_Project_Console.exe AES192 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f1011121314151617 > AES_output.txt
 
-# AES-256 Test
+# AES-256
 AES_Project_Console.exe AES256 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f > AES_output.txt
 ```
 
 # Linux:
 ```bash
 
-# Full Appendix C of the FIPS specification
+# Full Appendix C of the FIPS specification (Pass no arguments to executable)
 ./AES_Project_Console > AES_output.txt
 
-# AES-128 Test
+# AES-128
 ./AES_Project_Console AES128 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f > AES_output.txt
 
-# AES-192 Test
+# AES-192
 ./AES_Project_Console AES192 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f1011121314151617 > AES_output.txt
 
-# AES-256 Test
+# AES-256
 ./AES_Project_Console AES256 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f > AES_output.txt
 ```
 
