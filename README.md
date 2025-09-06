@@ -142,6 +142,12 @@ KEY:                00112233445566778899aabbccddeeff
 Error: Key length mismatch
 ```
 
+## Development Environment
+
+This solution was built and tested using:
+
+- Microsoft Visual Studio Professional 2022 (64-bit)
+- .NET 8.0 SDK
 
 
 
