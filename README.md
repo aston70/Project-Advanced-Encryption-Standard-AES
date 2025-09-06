@@ -91,7 +91,7 @@ dotnet publish -c Release -r linux-x64 --self-contained true
 # Windows:
 ```bat
 :: AES-128 Test
-AES_Project_Console.exe AES128 000102030405060708090a0b0c0d0e0f 00112233445566778899aabbccddeeff > AES_output.txt
+AES_Project_Console.exe AES128 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f > AES_output.txt
 
 :: AES-192 Test
 AES_Project_Console.exe AES192 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f1011121314151617 > AES_output.txt
@@ -103,7 +103,7 @@ AES_Project_Console.exe AES256 00112233445566778899aabbccddeeff 0001020304050607
 # Linux:
 ```bash
 # AES-128 Test
-./AES_Project_Console AES128 000102030405060708090a0b0c0d0e0f 00112233445566778899aabbccddeeff > AES_output.txt
+./AES_Project_Console AES128 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f > AES_output.txt
 
 # AES-192 Test
 ./AES_Project_Console AES192 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f1011121314151617 > AES_output.txt
