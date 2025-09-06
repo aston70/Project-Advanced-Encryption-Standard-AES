@@ -19,7 +19,7 @@ It supports encrypting and decrypting 16-byte blocks using multiple key sizes (1
 
 **Main Project: `AES_Project_Console`**
 - Entry point: `Program.cs` with `Main()` method.
-- Handles reading input (key size string, input string, key string, mode string (encrypt/decrypt)), calling AES_Cipher.cs -> Cipher() or InvCipher().
+- Handles reading input arguments (key size string, input string, key string, mode string (encrypt/decrypt)), calling AES_Cipher.cs -> Cipher() or InvCipher().
 
 **AES_Project_Domain**
 The AES_Project_Domain project contains all the core AES classes broken out into smaller pieces, each serving a specific function in the AES encryption and decryption process:
