@@ -93,30 +93,63 @@ The `AES_Project_Console'` is the one needed to compile and execute.
 
 ### 1. Clone the repository
 ```bash
+gitbash->
+
 git clone https://github.com/aston70/Project-Advanced-Encryption-Standard-AES.git
 cd Project-Advanced-Encryption-Standard-AES
 ```
 
 ### 2. Build the project
+Build commands
+Once built, executable files should reside in 
+
+Windows:  .\AES_Project_Console\bin\Release\net8.0\win-x64
+Linux:    .\AES_Project_Console\bin\Release\net8.0\linux-x64
+
 ```bash
 dotnet build
 dotnet run --project AES_Project_Console
 dotnet publish -c Release -r win-x64 --self-contained true
 dotnet publish -c Release -r linux-x64 --self-contained true
 ```
-Once built, executable files should reside in .\AES_Project_Console\bin\Release\net8.0\
 
-### 3. Execute
+Linux - Detailed Example (Powershell):
+Build Single file - recommended
+
+```bash
+PS C:\> cd "C:\VS Projects\Project-Advanced-Encryption-Standard-AES"
+
+PS C:\VS Projects\Project-Advanced-Encryption-Standard-AES> dotnet publish ".\AES_Project\AES_Project_Console\AES_Project_Console.csproj" -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -o ./publish
+>>
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  AES_Project_Domain -> C:\VS Projects\Project-Advanced-Encryption-Standard-AES\AES_Project\AES_Project_Domain\bin\Release\net8.0\AES_Project_Domain.dll
+  AES_Project_Console -> C:\VS Projects\Project-Advanced-Encryption-Standard-AES\AES_Project\AES_Project_Console\bin\Release\net8.0\linux-x64\AES_Project_Console.dll
+  AES_Project_Console -> C:\VS Projects\Project-Advanced-Encryption-Standard-AES\publish\
+```
+
+### Transfer to Linux Lab Machine, if needed
+This copies the self-contained Linux executable to your home directory on the lab machine.
+* There are probably more files in this folder, but if self-contained build, AES_Project_Console should be theo only one needed.
+  
+```bash
+PS C:\VS Projects\Project-Advanced-Encryption-Standard-AES> scp "C:\VS Projects\Project-Advanced-Encryption-Standard-AES\publish\AES_Project_Console" dsmith78@mscs6.eecs.utk.edu:~/
+(dsmith78@mscs6.eecs.utk.edu) Password:
+AES_Project_Console                                                                                                                            100%   13MB  13.1MB/s   00:00
+PS C:\VS Projects\Project-Advanced-Encryption-Standard-AES>
+```
+
+### 4. Execute
 
 # Windows:
 ```bat
-:: AES-128 Test
+# AES-128 Test
 AES_Project_Console.exe AES128 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f > AES_output.txt
 
-:: AES-192 Test
+# AES-192 Test
 AES_Project_Console.exe AES192 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f1011121314151617 > AES_output.txt
 
-:: AES-256 Test
+# AES-256 Test
 AES_Project_Console.exe AES256 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f > AES_output.txt
 ```
 
@@ -133,6 +166,7 @@ AES_Project_Console.exe AES256 00112233445566778899aabbccddeeff 0001020304050607
 ```
 
 # Handled Exceptions
+* Known and Unknown exceptions are handled and returned in the output.
 ```bash
 C.2   AES-192 (Nk=6, Nr=12))
 
