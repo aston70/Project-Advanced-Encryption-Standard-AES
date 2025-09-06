@@ -79,7 +79,7 @@ namespace AES_Project
             string cipherType = AES_Parameters.GetCipherType(keySize);
             string displayKeySize = AES_Parameters.GetDisplayString(keySize);
 
-            Console.WriteLine($"{cipherType}   {displayKeySize} (Nk={Nk}, Nr={Nr}))");
+            Console.WriteLine($"{cipherType}   {displayKeySize} (Nk={Nk}, Nr={Nr})");
             Console.WriteLine();
             Console.WriteLine($"PLAINTEXT:          {plainText}");
             Console.WriteLine($"KEY:                {key}");
