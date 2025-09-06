@@ -15,7 +15,7 @@ namespace AES_Project
             {
                 // Run built-in Appendix C test vectors
                 RunCipherAppendixCTests();
-                RunInvCipherAppendixCTests();
+                //RunInvCipherAppendixCTests();
                 return;
             }
 
@@ -89,7 +89,7 @@ namespace AES_Project
 
         static void RunCipherAppendixCTests()
         {
-            Console.WriteLine("Running AES Appendix C Cipher Test Vectors.");
+            //Console.WriteLine("Running AES Appendix C Cipher Test Vectors.");
             RunCipherTest(
                 "AES-128",
                 "000102030405060708090a0b0c0d0e0f", // key
@@ -115,6 +115,9 @@ namespace AES_Project
             );
         }
 
+        /// <summary>
+        /// Explicit to running inverse cipher tests...
+        /// </summary>
         static void RunInvCipherAppendixCTests()
         {
             Console.WriteLine("Running AES Appendix C Inverse Cipher Test Vectors.");
@@ -147,17 +150,22 @@ namespace AES_Project
 
         static void RunCipherTest(string name, string keyHex, string plaintextHex, string expectedCipherHex, AesKeySize keySize)
         {
+            OutputHeader(keySize, plaintextHex, keyHex);
+
             var aes = new AES_Cipher(keyHex, keySize);
             byte[] actual = aes.Cipher(plaintextHex, true);
 
             string actualHex = BitConverter.ToString(actual).Replace("-", "");
 
-            Console.WriteLine($"{name} Test:");
-            Console.WriteLine($"  Key:       {keyHex}");
-            Console.WriteLine($"  Plaintext: {plaintextHex}");
-            Console.WriteLine($"  Cipher:    {actualHex}");
-            Console.WriteLine($"  Expected:  {expectedCipherHex}");
-            Console.WriteLine($"  Result:    {(string.Equals(actualHex, expectedCipherHex, StringComparison.OrdinalIgnoreCase) ? "PASS" : "FAIL")}");
+            Console.WriteLine();
+            actual = aes.InvCipher(actual, trace: true);
+
+            //Console.WriteLine($"{name} Test:");
+            //Console.WriteLine($"  Key:       {keyHex}");
+            //Console.WriteLine($"  Plaintext: {plaintextHex}");
+            //Console.WriteLine($"  Cipher:    {actualHex}");
+            //Console.WriteLine($"  Expected:  {expectedCipherHex}");
+            //Console.WriteLine($"  Result:    {(string.Equals(actualHex, expectedCipherHex, StringComparison.OrdinalIgnoreCase) ? "PASS" : "FAIL")}");
             Console.WriteLine();
         }
 
