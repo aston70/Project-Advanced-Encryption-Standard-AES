@@ -139,8 +139,6 @@ AES_Project_Console                                                             
 PS C:\VS Projects\Project-Advanced-Encryption-Standard-AES>
 ```
 
-
-
 ### 4. Execute
 
 # Windows:
@@ -168,6 +166,7 @@ AES_Project_Console.exe AES256 00112233445566778899aabbccddeeff 0001020304050607
 ```
 
 # Handled Exceptions
+* Known and Unknown exceptions are handled and returned in the output.
 ```bash
 C.2   AES-192 (Nk=6, Nr=12))
 
