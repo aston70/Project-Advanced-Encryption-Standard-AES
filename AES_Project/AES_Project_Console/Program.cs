@@ -148,7 +148,7 @@ namespace AES_Project
         static void RunCipherTest(string name, string keyHex, string plaintextHex, string expectedCipherHex, AesKeySize keySize)
         {
             var aes = new AES_Cipher(keyHex, keySize);
-            byte[] actual = aes.Cipher(plaintextHex);
+            byte[] actual = aes.Cipher(plaintextHex, true);
 
             string actualHex = BitConverter.ToString(actual).Replace("-", "");
 
@@ -164,7 +164,7 @@ namespace AES_Project
         static void RunInvCipherTest(string name, string keyHex, string plaintextHex, string expectedCipherHex, AesKeySize keySize)
         {
             var aes = new AES_Cipher(keyHex, keySize);
-            byte[] actual = aes.InvCipher(plaintextHex);
+            byte[] actual = aes.InvCipher(plaintextHex, true);
 
             string actualHex = BitConverter.ToString(actual).Replace("-", "");
 
