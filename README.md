@@ -29,7 +29,7 @@ The AES_Project_Domain project contains the following key classes, each serving 
 - `SBoxes.cs`: Implements the Substitution Boxes (S-box and Inverse S-box) used in the SubBytes transformation, providing non-linearity to the algorithm.
 - `Utility.cs`: Contains various helper functions or common utilities used across different parts of the AES implementation.
 
-**AES Core**
+**AES Core Functions**
 - Implements AES algorithm steps:
   - `Cipher(byte[] input, bool trace = false)` — encrypts a block.
   - `InvCipher(byte[] input, bool trace = false)` — decrypts a block.
@@ -41,9 +41,75 @@ The AES_Project_Domain project contains the following key classes, each serving 
 
 ## Build Instructions
 
-1. Ensure you have **.NET 8 SDK** installed.
-2. Open a terminal/command prompt in the project root folder.
-3. Run:
+# Project-Advanced-Encryption-Standard-AES
 
+A .NET 8 console application implementing the AES (Advanced Encryption Standard) algorithm with support for multiple key sizes (128, 192, 256 bits). Includes both encryption and decryption, with optional round-by-round tracing.
+
+## Project Architecture
+
+The solution contains two main projects:
+
+### AES_Project_Console
+- Main console application.
+- Entry point: `Program.cs` (`Main()` method).
+- Handles user input and output, calls into the domain project for encryption/decryption.
+
+### AES_Project_Domain
+Contains the core AES logic, including the following classes:
+
+- **AES_Cipher.cs**: Handles primary AES encryption operations.
+- **AES_InverseCipher.cs**: Implements inverse operations for AES decryption.
+- **AES_Parameters.cs**: Defines AES parameters such as block size, key size, and number of rounds.
+- **AesKeySize.cs**: Specifies supported key sizes (128, 192, 256 bits).
+- **FiniteField.cs**: Contains Galois Field (GF(2^8)) logic for MixColumns and other transformations.
+- **KeyExpansion.cs**: Expands the initial AES key into round keys for each stage.
+- **SBoxes.cs**: Implements S-box and Inverse S-box for SubBytes and inverse transformations.
+- **Utility.cs**: General helper functions used across the AES implementation.
+
+## Prerequisites
+
+- [.NET 8 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- Command-line terminal (PowerShell, Command Prompt on Windows; bash/zsh on Linux)
+
+### Project Setup and Execution Instructions
+
+### 1. Clone the repository
+```bash
+git clone https://github.com/aston70/Project-Advanced-Encryption-Standard-AES.git
+cd Project-Advanced-Encryption-Standard-AES
+```
+
+### 2. Build the project
 ```bash
 dotnet build
+dotnet run --project AES_Project_Console
+dotnet publish -c Release -r win-x64 --self-contained true
+dotnet publish -c Release -r linux-x64 --self-contained true
+```
+
+### 3. Execute
+
+# Windows:
+```bat
+:: AES-128 Test
+AES_Project_Console.exe AES128 000102030405060708090a0b0c0d0e0f 00112233445566778899aabbccddeeff > AES_output.txt
+
+:: AES-192 Test
+AES_Project_Console.exe AES192 000102030405060708090a0b0c0d0e0f1011121314151617 00112233445566778899aabbccddeeff >> AES_output.txt
+
+:: AES-256 Test
+AES_Project_Console.exe AES256 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f 00112233445566778899aabbccddeeff >> AES_output.txt
+```
+
+# Linux:
+```bash
+# AES-128 Test
+./AES_Project_Console AES128 000102030405060708090a0b0c0d0e0f 00112233445566778899aabbccddeeff > AES_output.txt
+
+# AES-192 Test
+./AES_Project_Console AES192 000102030405060708090a0b0c0d0e0f1011121314151617 00112233445566778899aabbccddeeff >> AES_output.txt
+
+# AES-256 Test
+./AES_Project_Console AES256 000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f 00112233445566778899aabbccddeeff >> AES_output.txt
+```
+
