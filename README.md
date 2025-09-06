@@ -143,6 +143,9 @@ PS C:\VS Projects\Project-Advanced-Encryption-Standard-AES>
 
 # Windows:
 ```bat
+# Full Appendix C of the FIPS specification
+AES_Project_Console.exe > AES_output.txt
+
 # AES-128 Test
 AES_Project_Console.exe AES128 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f > AES_output.txt
 
@@ -155,6 +158,10 @@ AES_Project_Console.exe AES256 00112233445566778899aabbccddeeff 0001020304050607
 
 # Linux:
 ```bash
+
+# Full Appendix C of the FIPS specification
+./AES_Project_Console > AES_output.txt
+
 # AES-128 Test
 ./AES_Project_Console AES128 00112233445566778899aabbccddeeff 000102030405060708090a0b0c0d0e0f > AES_output.txt
 
