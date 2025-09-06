@@ -1,6 +1,11 @@
 # Project-Advanced-Encryption-Standard-AES
 .Net implementation of AES
 
+## References
+
+- [FIPS PUB 197 — Advanced Encryption Standard (AES)](https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf)
+
+
 # AES_Project_Console
 
 ## Overview
