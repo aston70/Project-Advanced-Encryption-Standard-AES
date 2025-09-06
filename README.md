@@ -103,7 +103,7 @@ cd Project-Advanced-Encryption-Standard-AES
 Build commands
 Once built, executable files should reside in 
 
-Windows:  .\AES_Project_Console\bin\Release\net8.0\
+Windows:  .\AES_Project_Console\bin\Release\net8.0\win-x64
 Linux:    .\AES_Project_Console\bin\Release\net8.0\linux-x64
 
 ```bash
