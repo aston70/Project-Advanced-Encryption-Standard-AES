@@ -22,7 +22,7 @@ namespace AES_Project
             // Otherwise, handle args
             if (args.Length < 3 || args.Length > 4)
             {
-                Console.WriteLine("Usage: AES_Project_Console <AES128|AES192|AES256> <keyHexValue> <plaintextHexValue> [encrypt|decrypt]");
+                Console.WriteLine("Usage: AES_Project_Console <AES128|AES192|AES256> <plaintext> <key> [encrypt|decrypt]");
                 Console.WriteLine("default mode: encrypt");
                 return;
             }
